@@ -1,37 +1,39 @@
 package edu.uw.ischool.aabahoy.quizdroid
 
 import android.content.Intent
-import android.content.Intent.EXTRA_TEXT
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Button
 import android.widget.TextView
 
 class TopicOverview : AppCompatActivity() {
+
+    private val EXTRA_TOPIC = "edu.us.ischool.quizdroid.TOPIC"
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_topic_overview)
 
-        // ----- populate activity w/ intent -----
-        // Get the Intent that started this activity and extract the string
-        val topic = intent.getStringExtra(EXTRA_TEXT)
+        val quizApp = QuizApp()
+        val repo : TopicRepository = quizApp.getTopicRepository()
 
-        // Capture the layout's TextView and set the string as its text
-        val quizTopicTV = findViewById<TextView>(R.id.tvTopic).apply {
-            text = topic
-        }
+        val topic = intent.getIntExtra(EXTRA_TOPIC, 0)
+        val info = repo.getTopic(topic)
 
-        // ----- next activity -----
-        // get reference to begin button
-        val btnBegin = findViewById<Button>(R.id.btnBeginQuiz)
-        // start quiz question activity on click
-        btnBegin.setOnClickListener{
-            //val quizTopic = quizTopicTV.text.toString()
-            val intent = Intent(this, QuizQuestion::class.java).apply {
-                putExtra("QUESTION_NUM", 1)
-            }
+        findViewById<TextView>(R.id.textView2).text = info.title
+        findViewById<TextView>(R.id.textView3).text = info.longDesc
+        findViewById<TextView>(R.id.textView4).text = info.questions.size.toString() + " Questions"
+
+        val beginBtn = findViewById<Button>(R.id.button)
+        val bundle = Bundle()
+        bundle.putString("answer", "")
+        bundle.putInt("correct", 0)
+        bundle.putInt("score", 0)
+        bundle.putInt("question", 1)
+        bundle.putInt("questionMax", info.questions.size)
+        beginBtn.setOnClickListener {
+            val intent = Intent(this, QuizPage::class.java).putExtra("bundle", bundle)
             startActivity(intent)
-            finish()
         }
     }
 }

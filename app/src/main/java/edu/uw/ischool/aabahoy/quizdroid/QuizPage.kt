@@ -1,0 +1,58 @@
+package edu.uw.ischool.aabahoy.quizdroid
+
+import android.content.Intent
+import androidx.appcompat.app.AppCompatActivity
+import android.os.Bundle
+import android.widget.Button
+import android.widget.RadioButton
+import android.widget.RadioGroup
+import android.widget.TextView
+import androidx.core.view.isVisible
+
+class QuizPage : AppCompatActivity() {
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_quiz)
+
+        val quizApp = QuizApp()
+        val repo : TopicRepository = quizApp.getTopicRepository()
+
+        val bundle : Bundle = intent.getBundleExtra("bundle") as Bundle
+        val q : Int = bundle.getInt("question")
+        val qIdx : Int = q - 1
+        val quiz = repo.getQuiz(qIdx)
+
+        val question = findViewById<TextView>(R.id.question)
+        val a1 = findViewById<TextView>(R.id.a1)
+        val a2 = findViewById<TextView>(R.id.a2)
+        val a3 = findViewById<TextView>(R.id.a3)
+        val a4 = findViewById<TextView>(R.id.a4)
+        question.text = quiz.question
+        a1.text = quiz.a1
+        a2.text = quiz.a2
+        a3.text = quiz.a3
+        a4.text = quiz.a4
+
+        val submitBtn = findViewById<Button>(R.id.submitBtn)
+        submitBtn.isVisible = false
+
+        val radioGroup = findViewById<RadioGroup>(R.id.radioGroup)
+        radioGroup.setOnCheckedChangeListener { _, _ ->
+            submitBtn.isVisible = true
+        }
+        submitBtn.setOnClickListener {
+            val selected : RadioButton = findViewById(radioGroup.checkedRadioButtonId)
+
+            val bundle2 = Bundle()
+            bundle2.putString("answer", selected.text.toString())
+            bundle2.putInt("correct", quiz.correct)
+            bundle2.putInt("score", bundle.getInt("score"))
+            bundle2.putInt("question", qIdx)
+            bundle2.putInt("questionMax", bundle.getInt("questionMax"))
+            val intent = Intent(this, Answer::class.java).putExtra("bundle", bundle2)
+            finish()
+            startActivity(intent)
+        }
+    }
+}

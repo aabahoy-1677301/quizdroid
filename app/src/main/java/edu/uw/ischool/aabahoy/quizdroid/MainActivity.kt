@@ -1,39 +1,71 @@
 package edu.uw.ischool.aabahoy.quizdroid
 
+import android.app.Activity
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.Adapter
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
-
-class Quiz(topic: String) {
-    val topic = topic
-    val desc = "This is a description of the quiz topic."
-    val totalQuestions = 9
-    var currentQuestion = 1
-
-    fun increaseQuestion() = currentQuestion + 1
-}
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.ArrayAdapter
+import android.widget.Button
+import android.widget.ListView
+import android.widget.TextView
 
 class MainActivity : AppCompatActivity() {
 
-    lateinit var linearLayoutManager: LinearLayoutManager
-    lateinit var adapter: RecyclerAdapter
+    private lateinit var arrayAdapter : ArrayAdapter<String>
+    private val EXTRA_TOPIC = "edu.us.ischool.quizdroid.TOPIC"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        linearLayoutManager = LinearLayoutManager(this)
+        val quizApp = QuizApp()
+        val repo : TopicRepository = quizApp.getTopicRepository()
+        val listView = findViewById<ListView>(R.id.listView)
 
-        val quizTopics = arrayListOf<Quiz>(Quiz("Math"), Quiz("Physics"), Quiz("Marvel Super Heroes"),
-            Quiz("Pokemon Types"), Quiz("Pokemon Names"))
+        val allTopics = repo.getAllTopics()
 
-        // access recyclerView from XML file
-        var rv = findViewById<RecyclerView>(R.id.listQuiz)
-        rv.layoutManager = linearLayoutManager
-        adapter = RecyclerAdapter(quizTopics)
-        rv.adapter = adapter
+        val adapter = TopicAdapter(this, allTopics)
+        listView.adapter = adapter
+        listView.setOnItemClickListener { parent, view, pos, id ->
 
+            val intent = Intent(this, TopicOverview::class.java).apply {
+                putExtra(EXTRA_TOPIC, pos)
+            }
+            startActivity(intent)
+        }
+    }
+
+    class TopicAdapter(private val context: Activity, private val data: Array<Topic>): ArrayAdapter<Topic>(context, R.layout.topic_list_item) {
+        override fun getItem(position: Int): Topic {
+            return data[position]
+        }
+
+        override fun getCount(): Int {
+            return data.size
+        }
+
+        override fun getItemId(position: Int): Long {
+            return position.toLong()
+        }
+
+        override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
+            val view = if (convertView == null) {
+                val inflater = LayoutInflater.from(context)
+                inflater.inflate(R.layout.topic_list_item, parent, false)
+            } else {
+                convertView
+            }
+
+            val titleText = view.findViewById(R.id.topicTitle) as TextView
+            val descText = view.findViewById(R.id.topicDescription) as TextView
+
+            titleText.text = data[position].title
+            descText.text = data[position].shortDesc
+
+            return view
+        }
     }
 }
