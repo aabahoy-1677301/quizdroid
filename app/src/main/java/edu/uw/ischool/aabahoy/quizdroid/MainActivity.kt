@@ -15,7 +15,7 @@ import android.widget.TextView
 class MainActivity : AppCompatActivity() {
 
     private lateinit var arrayAdapter : ArrayAdapter<String>
-    private val EXTRA_TOPIC = "edu.us.ischool.quizdroid.TOPIC"
+    private val EXTRA_TOPIC = "edu.uw.ischool.aabahoy.quizdroid.TOPIC"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

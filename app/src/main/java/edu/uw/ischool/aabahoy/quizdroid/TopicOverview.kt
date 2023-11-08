@@ -1,5 +1,6 @@
 package edu.uw.ischool.aabahoy.quizdroid
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -8,8 +9,9 @@ import android.widget.TextView
 
 class TopicOverview : AppCompatActivity() {
 
-    private val EXTRA_TOPIC = "edu.us.ischool.quizdroid.TOPIC"
+    private val EXTRA_TOPIC = "edu.uw.ischool.aabahoy.quizdroid.TOPIC"
 
+    @SuppressLint("SetTextI18n")
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_topic_overview)

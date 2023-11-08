@@ -15,7 +15,8 @@
         android:text="Question 1"
         android:textSize="24sp"
         app:layout_constraintStart_toStartOf="parent"
-        tools:layout_editor_absoluteY="166dp" />
+        tools:layout_editor_absoluteY="166dp"
+        tools:ignore="MissingConstraints" />
 
     <LinearLayout
         android:id="@+id/linearLayout"
